@@ -1,14 +1,15 @@
 #pragma once
-#include <GLAD/glad.h>
+#include "../render/ShaderProgram.h"
+#include <assimp/types.h>
+#include <fstream>
+#include <glad/glad.h>
 #include <glfw/glfw3.h>
 #include <glm.hpp>
-#include <gtc/type_ptr.hpp>
 #include <gtc/matrix_transform.hpp>
-#include <D:/cpp/1/3DModel/src/render/shaderProgram.h>
+#include <gtc/type_ptr.hpp>
 #include <iostream>
-#include <fstream>
+#include <utility>
 #include <vector>
-#include <assimp/types.h>
 
 using namespace std;
 
@@ -28,7 +29,7 @@ struct Vertex {
  };
 
 struct Texture {
-    unsigned int id;
+    std::shared_ptr<Texture2D> texture;
     string type;
     string path;
 };
@@ -39,22 +40,18 @@ public:
     vector<Vertex>       vertices;
     vector<unsigned int> indices;
     vector<Texture>      textures;
-    unsigned int VAO;
+    unsigned int VAO = 0;
 
     // constructor
     Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures)
+        : vertices(std::move(vertices)), indices(std::move(indices)), textures(std::move(textures))
     {
-        this->vertices = vertices;
-        this->indices = indices;
-        this->textures = textures;
-
         // now that we have all the required data, set the vertex buffers and its attribute pointers.
         setupMesh();
-        
     }
 
     // render the mesh
-    void Draw(Render::ShaderProgram& shader)
+    void Draw(const std::shared_ptr<Render::ShaderProgram>& shader)
     {
         // bind appropriate textures
         unsigned int diffuseNr = 1;
@@ -77,9 +74,9 @@ public:
                 number = std::to_string(heightNr++); // transfer unsigned int to string
 
             // now set the sampler to the correct texture unit
-            shader.setInt((name), i);
+            shader->setInt((name), i);
             // and finally bind the texture
-          glBindTexture(GL_TEXTURE_2D, textures[i].id);
+            textures[i].texture->bind();
         }
 
         // draw mesh
@@ -88,12 +85,13 @@ public:
         glBindVertexArray(0);
 
         // always good practice to set everything back to defaults once configured.
-      //  glActiveTexture(GL_TEXTURE0);
+       glActiveTexture(GL_TEXTURE0);
     }
 
 private:
     // render data 
-    unsigned int VBO, EBO;
+    unsigned int VBO = 0;
+    unsigned int EBO = 0;
 
     // initializes all the buffer objects/arrays
     void setupMesh()

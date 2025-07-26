@@ -1,7 +1,12 @@
 #pragma once 
-#include "Windows.h"
-#include <GLAD/glad.h>
-#include <glfw/glfw3.h>
+//#include "Windows.h"
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <objects/GameObject.h>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -14,7 +19,7 @@
 #include <gtc/matrix_transform.hpp>
 #include "stb_image.h"
 #include <memory>
-//#include "MyFormat.h"
+
 
 //#define MAX_BONE_INFLUENCE 4
 #pragma pack(push, 1)
@@ -30,35 +35,42 @@ struct MyTextures {
 
 #pragma pack(pop)
 
-struct FileMapping {//структура отображения файла в память 
+struct FileMapping {
 
-	HANDLE hFile; //дескриптор файла 
-	HANDLE hMapping; //дескриптор отображения 
-	size_t fsize; //размер файла 
-	unsigned char* dataPtr; //указатель на данные 
+	int hFile; 
+	size_t fsize;  
+	unsigned char* dataPtr; 
 };
-class Model {
+struct validTextures {
+	bool diffuse;
+	bool specular;
+};
+class Model : public GameObject{
 public:
-	Model(char* path) {
-	std::string modelPath = path;
-	if (modelPath.substr(modelPath.find_last_of('.'), modelPath.size()) == ".dwu") {
-		loadConvertedModel(path);
-	}
-	else loadModel(modelPath);
-	}
-	void Draw(Render::ShaderProgram &program);
+	explicit Model(glm::vec3 position, const std::string& modelFileName) {
+	initTransform(position);
+	modelPath = MODELS_DIRECTORY + modelFileName;
+	Model::loadObject();
+	Model::initShader();
+    }
+//	void Draw(Render::ShaderProgram &program);
+	void draw() override;
+	void switchLighting() override;
+	~Model() override = default;
 private:
-	
-//данные модели
+	std::string modelPath;
+
 	unsigned int byteCount = 0;
 	std::vector<Mesh> meshes;
-	std::string directory;
 	std::vector<Texture> loadedTextures;
-	void loadModel(std::string path);// метод загрузки модели
+	void loadObject() override;
+	void loadModel(const std::string& path);
 	 void processNode(aiNode* node, const aiScene* scene);
-	 Mesh processMesh(std::unique_ptr<FileMapping>& fMapping, const int& vertSize, const int& indxSize, const int& texSize);
-	 void loadConvertedModel(const char* path);
-	Mesh processMesh(aiMesh* mesh, const aiScene* scene);
-	std::vector<Texture> loadMaterialTexture(aiMaterial* mat, aiTextureType type, std::string typeName);
-	unsigned int TextureFromFile(const char* path, const std::string& directory);
+	 auto processMesh(std::unique_ptr<FileMapping>& fMapping, const int& vertSize, const int& indxSize, const int& texSize) -> Mesh;
+	 void loadConvertedModel(const std::string& path);
+	auto processMesh(aiMesh* mesh, const aiScene* scene) -> Mesh;
+	auto loadMaterialTexture( aiMaterial* mat, aiTextureType type, const char* typeName) -> std::vector<Texture>;
+    void initShader() override;
+    
+    
 };

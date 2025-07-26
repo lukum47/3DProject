@@ -2,7 +2,7 @@
 #include "ext/vector_float3.hpp"
 #include "render/ShaderProgram.h"
 #include <memory>
-#include <objects/GameObject.h>
+#include <objects/SimpleObject.h>
 #include <manager/objectFabric.h>
 #ifdef _WIN32
 #include <windows.h>  // Windows-версия потоков
@@ -12,15 +12,10 @@
 #include <stdexcept>
 #include <vector>
 
-struct ObjectBuffers;
 
-using BuffersPtr = std::shared_ptr<ObjectBuffers>;
-using BuffersRef = std::weak_ptr<ObjectBuffers>;
 
-class Cube : public GameObject {
+class Cube : public SimpleObject {
 private:
-    BuffersPtr instanceBuffers;
-
     static constexpr float cubeVertices[] = {
         // Позиции           // Нормали          // Текстурные координаты
         // Передняя грань
@@ -85,16 +80,15 @@ private:
         20, 21, 22,
         22, 23, 20
     };
-
     void createCube(glm::vec3 position);
-    void setupBuffers() override;
+    void loadObject() override;
     void initShader() override;
-    void textureFromFile(std::string textureName) override;
 public: 
     Cube(glm::vec3 position, std::string& textureName, BuffersPtr& buffers);
-    ~Cube() override = default;
-    void draw(float deltaTime) override;
-    std::weak_ptr<Transform> getTransform() override;
-    std::shared_ptr<ShaderProgram> getShader() override;
+    ~Cube() override;
+    void draw() override;
+    auto getTransform() -> std::weak_ptr<Transform> override;
+    auto getShader() -> std::shared_ptr<ShaderProgram> override;
     void switchLighting() override;
+   
 };

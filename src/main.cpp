@@ -1,4 +1,4 @@
-#include <GLAD/glad.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm.hpp>
 #include <gtc/type_ptr.hpp>
@@ -13,6 +13,7 @@
 #include "resources/MyFormat.h"
 #include "manager/objectFabric.h"
 #include "objects/GameObject.h"
+#include "objects/SimpleObject.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -22,7 +23,7 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouseCallback(GLFWwindow* window, double xpos, double ypos);
-void processInput(GLFWwindow* window, Render::ShaderProgram& program);
+void processInput(GLFWwindow* window);
 
 // settings
 const unsigned int SCR_WIDTH = 1200;
@@ -149,17 +150,17 @@ int main()
     // configure global opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
-    std::string lightVertex = "D:/cpp/1/3DModel/res/shader/lightVertex.txt";
+    std::string lightVertex = "/Users/bogdan/cpp/3DProject/res/shader/lightVertex.txt";
 
-    std::string lightFragment = "D:/cpp/1/3DModel/res/shader/lightFragment.txt";
+    std::string lightFragment = "/Users/bogdan/cpp/3DProject/res/shader/lightFragment.txt";
 
     Render::ShaderProgram lightProg(lightVertex, lightFragment);
 
     camera = std::make_shared<Camera>(SCR_WIDTH, SCR_HEIGHT);
     fabric = std::make_unique<objectFabric>();
-    fabric.get()->createSimpleObject(GameObject::simpleObjectType::OBJECT_CUBE, glm::vec3(1.f, 0.f, 3.f), "container2.png");
+    fabric.get()->createSimpleObject(SimpleObject::simpleObjectType::OBJECT_CUBE, glm::vec3(1.f, 0.f, 3.f), "container2.png");
 
-    fabric.get()->createSimpleObject(GameObject::simpleObjectType::OBJECT_CUBE, glm::vec3(2.f, 0.f, 5.f), "matrix.jpg");
+    fabric.get()->createSimpleObject(SimpleObject::simpleObjectType::OBJECT_CUBE, glm::vec3(2.f, 0.f, 5.f), "matrix.jpg");
     lightProg.use();
 
     GLuint lightVBO = 0;
@@ -180,14 +181,15 @@ int main()
 
     // build and compile shaders
     // -------------------------
-    std::string vertex = "D:/cpp/1/3DModel/res/shader/vertex.txt";
+    //std::string vertex = "/Users/bogdan/cpp/3DProject/res/shader/vertex.txt";
 
-    std::string fragment = "D:/cpp/1/3DModel/res/shader/fragment.txt";
+   // std::string fragment = "/Users/bogdan/cpp/3DProject/res/shader/fragment.txt";
 
-    Render::ShaderProgram ourShader(vertex, fragment);
+   // Render::ShaderProgram ourShader(vertex, fragment);
 
   //  MyFormat format("D:/cpp/1/openProject/res/model/backpack.obj", "D:/cpp/1/openProject/res/format/format.dwu");
-    Model ourModel("D:/cpp/1/openProject/res/format/format.dwu");
+    fabric->createModel(glm::vec3(1.f, 2.f, 7.f), "backpack.obj", "backpack");
+  //  Model ourModel("/Users/bogdan/cpp/3DProject/res/model/format.dwu");
 
     // load models
     // 
@@ -213,7 +215,7 @@ int main()
 
         // input
         // -----
-        processInput(window, ourShader);
+        processInput(window);
 
         // render
         // ------
@@ -221,12 +223,12 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // don't forget to enable shader before setting uniforms
-        ourShader.use();
+    //    ourShader.use();
 
-        ourShader.setVec3("pointLight.position", lightPos);
-        ourShader.setVec3("pointLight.ambient", 0.05f, 0.05f, 0.05f);
-        ourShader.setVec3("pointLight.diffuse", 0.8f, 0.8f, 0.8f);
-        ourShader.setVec3("pointLight.specular", 1.0f, 1.0f, 1.0f);
+    //    ourShader.setVec3("pointLight.position", lightPos);
+    //    ourShader.setVec3("pointLight.ambient", 0.05f, 0.05f, 0.05f);
+    //    ourShader.setVec3("pointLight.diffuse", 0.8f, 0.8f, 0.8f);
+     //   ourShader.setVec3("pointLight.specular", 1.0f, 1.0f, 1.0f);
 
         // view/projection transformations
         glm::mat4 projection = glm::mat4(1.f);
@@ -234,31 +236,31 @@ int main()
         camera.get()->setProjectionMatrix(projection);
         glm::mat4 view = camera.get()->getViewMatrix();
 
-        ourShader.setVec3("viewPos", camera.get()->Position);
-        ourShader.setVec3("lightColor", lightColor);
-        ourShader.setVec3("objectColor", 1.f, 0.5f, 0.31f);
-        GLint modelLoc = ourShader.uniformLoc("model");
-        GLint viewLoc = ourShader.uniformLoc("view");
-        GLint projectionLoc = ourShader.uniformLoc("projection");
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+     //   ourShader.setVec3("viewPos", camera.get()->Position);
+     //   ourShader.setVec3("lightColor", lightColor);
+      //  ourShader.setVec3("objectColor", 1.f, 0.5f, 0.31f);
+        // GLint modelLoc = ourShader.uniformLoc("model");
+        // GLint viewLoc = ourShader.uniformLoc("view");
+        // GLint projectionLoc = ourShader.uniformLoc("projection");
+        // glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+        // glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));	// it's a bit too big for our scene, so scale it down
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+        // model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+        // model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));	// it's a bit too big for our scene, so scale it down
+        // glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-        ourModel.Draw(ourShader);
+        fabric->updateModels(camera);
 
-        fabric.get()->updateSimpleObjects(camera);
+        fabric->updateSimpleObjects(camera);
         
 
 
         lightProg.use();
-        modelLoc = lightProg.uniformLoc("model");
-        viewLoc = lightProg.uniformLoc("view");
-        projectionLoc = lightProg.uniformLoc("projection");
+       GLint modelLoc = lightProg.uniformLoc("model");
+       GLint viewLoc = lightProg.uniformLoc("view");
+       GLint projectionLoc = lightProg.uniformLoc("projection");
         lightProg.setVec3("lightColor", lightColor);
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
@@ -284,7 +286,7 @@ int main()
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
 
-void processInput(GLFWwindow* window, Render::ShaderProgram& program)
+void processInput(GLFWwindow* window)
 {
     GLfloat cameraSpeed = 0.3f;
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
@@ -340,7 +342,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 // -------------------------------------------------------
 void mouseCallback(GLFWwindow* window, double xpos, double ypos)
 {
-    camera.get()->processMouseMovement(xpos, ypos, true);
+    camera.get()->processMouseMovement(xpos, ypos, deltaTime);
 
 }
 

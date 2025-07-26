@@ -4,37 +4,37 @@
 namespace Render {
 	ShaderProgram::ShaderProgram(const char* vertexShader, const char* fragmentShader)
 	{
-		GLuint vertexShaderID = 0; // объявление вертексного шейдера 
-		if (!createShader(vertexShader, GL_VERTEX_SHADER, vertexShaderID)) {//проверка компиляции вертексного шейдера
+		GLuint vertexShaderID = 0; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 
+		if (!createShader(vertexShader, GL_VERTEX_SHADER, vertexShaderID)) {//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 			std::cerr << "VERTEX SHADER: Compile-time error:\n";
 			return;
 		}
 
-		GLuint fragmentShaderID = 0; // объявление фрагментного шейдера 
-		if (!createShader(fragmentShader, GL_FRAGMENT_SHADER, fragmentShaderID)) {//проверка компиляции фрагментного шейдера
+		GLuint fragmentShaderID = 0; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 
+		if (!createShader(fragmentShader, GL_FRAGMENT_SHADER, fragmentShaderID)) {//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 			std::cerr << "FRAGMENT SHADER: Compile-time error:\n";
-			glDeleteShader(vertexShaderID);//при неудачной компиляции фрагментного шейдера удаляется вертексный
+			glDeleteShader(vertexShaderID);//пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 			return;
 		}
 
-		m_ID = glCreateProgram();//создание шейдерной программы
-		glAttachShader(m_ID, vertexShaderID);//присоединяем шейдеры к программе
+		m_ID = glCreateProgram();//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		glAttachShader(m_ID, vertexShaderID);//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		glAttachShader(m_ID, fragmentShaderID);
-		glLinkProgram(m_ID);//линкуем
-		//проверка успешности линковки
+		glLinkProgram(m_ID);//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		GLint success;
 		glGetProgramiv(m_ID, GL_LINK_STATUS, &success);
 		if (!success) {
 			GLchar inflog[1024];			
-			glGetShaderInfoLog(m_ID, 1024, nullptr, inflog); // функция вывода сообщения
-			std::cerr << "ERROR::SHADER: Link-time error:\n" << inflog << std::endl;// вывод сообщения об ошибке
+			glGetShaderInfoLog(m_ID, 1024, nullptr, inflog); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+			std::cerr << "ERROR::SHADER: Link-time error:\n" << inflog << std::endl;// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 			return;
 		}
 		else {
-			m_isCompiled = true;//устанавлеваем флаг удачной компиляции на true
+			m_isCompiled = true;//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ true
 		}
-		//после удачной компиляции программы удаляем шейдеры, 
-		//тк после создания шейдерной программы они больше не требуются
+		//пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, 
+		//пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		glDeleteShader(vertexShaderID);
 		glDeleteShader(fragmentShaderID);
 	}
@@ -82,6 +82,7 @@ namespace Render {
 	std::string ShaderProgram::getFileString(const std::string& pathToFile)
 	{
 		std::ifstream f;
+		std::string s = pathToFile.c_str();
 		f.open(pathToFile.c_str());
 		if (!f.is_open()) {
 			std::cerr << "Can't open the file" << pathToFile << std::endl;
@@ -100,22 +101,22 @@ namespace Render {
 
 	bool ShaderProgram::createShader(const std::string& source, const GLenum shaderType, GLuint &shaderID)
 	{
-		shaderID = glCreateShader(shaderType); // идентификатор шейдера (вертексный или фрагментный)
+		shaderID = glCreateShader(shaderType); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
 		const char* code = source.c_str();
-		glShaderSource(shaderID, 1, &code, nullptr);// функция загрузки шейдера
-													//1) идентификатор шейдера
-		glCompileShader(shaderID); //компиляция созданного шейдера
+		glShaderSource(shaderID, 1, &code, nullptr);// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+													//1) пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		glCompileShader(shaderID); //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		
 		GLint success;
-		glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);//функция проверки  шейдера
-															//задается тип шейдера, вторым параметром, что проверяется
-															//в данном случае компиляция 
-															// третьим параметром куда записать результат
+		glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ  пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+															//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+															//пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 
+															// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		if (!success) {
-			GLchar inflog[1024];// создание буфера для сообщения об ошибке указывая размер, 
-								// как правило одного кб хватает
-			glGetShaderInfoLog(shaderID, 1024, nullptr, inflog); // функция вывода сообщения
-			std::cerr << "ERROR::SHADER: Compile-time error:\n" << inflog << std::endl;// вывод сообщения об ошибке
+			GLchar inflog[1024];// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, 
+								// пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+			glGetShaderInfoLog(shaderID, 1024, nullptr, inflog); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+			std::cerr << "ERROR::SHADER: Compile-time error:\n" << inflog << std::endl;// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 			return false;
 		}
 		return true;
@@ -136,7 +137,7 @@ namespace Render {
 
 	ShaderProgram::~ShaderProgram()
 	{
-		glDeleteProgram(m_ID);//в деструкторе удаляем шейдерную программу
+		glDeleteProgram(m_ID);//пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	}
 
 	void ShaderProgram::setMtrix4(const std::string& name, const glm::mat4& matrix)
@@ -151,27 +152,27 @@ namespace Render {
 
 	ShaderProgram& ShaderProgram::operator=(ShaderProgram&& shaderProgram) noexcept
 	{
-		glDeleteProgram(m_ID); //удаляем старую программу
-		m_ID = shaderProgram.m_ID; // в пустое место заносим программу
-		m_isCompiled = shaderProgram.m_isCompiled; //приравниваем значение флага
+		glDeleteProgram(m_ID); //пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		m_ID = shaderProgram.m_ID; // пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		m_isCompiled = shaderProgram.m_isCompiled; //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 	
-		shaderProgram.m_ID = 0; //старые значения зануляем чтобы деструктор
-		shaderProgram.m_isCompiled = false;//не пытался повторно удалить данные
+		shaderProgram.m_ID = 0; //пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		shaderProgram.m_isCompiled = false;//пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 		return *this;
 	}
 
 	ShaderProgram::ShaderProgram(ShaderProgram&& shaderProgram) noexcept
 	{
-		m_ID = shaderProgram.m_ID; // в пустое место заносим программу
-		m_isCompiled = shaderProgram.m_isCompiled; //приравниваем занчение флага
+		m_ID = shaderProgram.m_ID; // пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		m_isCompiled = shaderProgram.m_isCompiled; //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 
-		shaderProgram.m_ID = 0; //старые значения зануляем чтобы деструктор
-		shaderProgram.m_isCompiled = false;//не пытался повторно удалить данные
+		shaderProgram.m_ID = 0; //пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		shaderProgram.m_isCompiled = false;//пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 	}
 
 	void ShaderProgram::use() const
 	{
-		glUseProgram(m_ID); //функция использования созданной шейдерной программы
+		glUseProgram(m_ID); //пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	}
 
 }

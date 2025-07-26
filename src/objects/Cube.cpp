@@ -6,8 +6,10 @@
 #include <objects/Cube.h>
 #include <string>
 #include <iostream>
+#include "Cube.h"
 
 std::weak_ptr<Transform> Cube::getTransform()
+
 {
     return transformer;
 }
@@ -19,10 +21,10 @@ std::shared_ptr<ShaderProgram> Cube::getShader()
 
 void Cube::switchLighting()
 {
-    
+    // Implementation goes here
 }
 
-void Cube::setupBuffers()
+void Cube::loadObject()
 {
     auto& buffers = instanceBuffers;
 
@@ -56,7 +58,7 @@ void Cube::setupBuffers()
 
     glEnableVertexAttribArray(3);
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
-    glVertexAttribDivisor(3, 1); // обновляется 1 раз на инстанс
+    glVertexAttribDivisor(3, 1);
 
     glBindVertexArray(0);
 }
@@ -65,58 +67,66 @@ void Cube::initShader()
 {
     std::string vertShaderPath = VERTEX_SHADER_PATH(Cube);
     std::string fragShaderPath = FRAGMENT_SHADER_PATH(Cube);
-
     program = std::make_shared<ShaderProgram>(vertShaderPath, fragShaderPath);
-
-}
-
-void Cube::textureFromFile(std::string textureName)
-{
-    int width, height, nrChannels;
-    std::string path = TEXTURE_DIRECTORY + textureName;
-    auto *image = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
- if(image) {
-                texture = std::make_shared<Texture2D>(width, height, image, nrChannels, GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
-                stbi_image_free(image);
-           }
-    else   {
-	        	std::cout << "Texture failed to load at path: " << path << '\n';
-	        	stbi_image_free(image);
-	       }
-
-    
 }
 
 Cube::Cube(glm::vec3 position, std::string& textureName, BuffersPtr& buffers)
-    : instanceBuffers(buffers)
 {
+    instanceBuffers = {buffers};
     if (buffers->instancePositions.empty()) {
-        setupBuffers();
+        Cube::loadObject();
     }
+    
     transformer = std::make_shared<Transform>();
     transformer->translate(position);
     createCube(position);
-    initShader();
-    textureFromFile(textureName);
+    Cube::initShader();
+    
+    try {
+        texture = textureFromFile(textureName);
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Cube construction failed: " << e.what() << '\n';
+        throw;
+    }
 }
 
-void Cube::draw(float deltaTime)
+Cube::~Cube()
+{
+          if (!instanceBuffers->instancePositions.empty() && instancePositionID < instanceBuffers->instancePositions.size())
+    {
+         
+                if (instancePositionID != instanceBuffers->instancePositions.size() - 1)
+                    {
+                          std::swap(instanceBuffers->instancePositions[instancePositionID], 
+                          instanceBuffers->instancePositions.back());
+
+                    }
+                instanceBuffers->instancePositions.pop_back();
+                    glBindBuffer(GL_ARRAY_BUFFER, instanceBuffers->instanceVBO);
+        glBufferData(GL_ARRAY_BUFFER,
+                    instanceBuffers->instancePositions.size() * sizeof(glm::vec3),
+                    instanceBuffers->instancePositions.data(), GL_DYNAMIC_DRAW);
+    }
+}
+
+
+void Cube::draw()
 {
     if (!program || !transformer) return;
     
     program->use();
+    program->setMtrix4("model", transformer->getModelMatrix());
+    program->setMtrix4("view", transformer->getViewMatrix());
+    program->setMtrix4("projection", transformer->getProjectionMatrix());
     
-        program->setMtrix4("model", transformer->getModelMatrix());
-        program->setMtrix4("view", transformer->getViewMatrix());
-        program->setMtrix4("projection", transformer->getProjectionMatrix());
-        glActiveTexture(GL_TEXTURE0);
-        texture->bind();
-        program->setInt("materials.diffuse", 0);
+    glActiveTexture(GL_TEXTURE0);
+    texture->bind();
+    program->setInt("materials.diffuse", 0);
     
-    
-    // Отрисовка куба
     glBindVertexArray(instanceBuffers->VAO);
-    glDrawElementsInstanced(GL_TRIANGLES, sizeof(cubeIndices)/sizeof(unsigned int), GL_UNSIGNED_INT, nullptr, instanceBuffers->instancePositions.size());
+    glDrawElementsInstanced(GL_TRIANGLES, sizeof(cubeIndices)/sizeof(unsigned int), 
+                          GL_UNSIGNED_INT, nullptr, instanceBuffers->instancePositions.size());
     glBindVertexArray(0);
 }
 
@@ -124,9 +134,9 @@ void Cube::createCube(glm::vec3 position)
 {
     auto& buffers = instanceBuffers;
     buffers->instancePositions.push_back(position);
-
+    instancePositionID = buffers->instancePositions.size() - 1;
     glBindBuffer(GL_ARRAY_BUFFER, buffers->instanceVBO);
     glBufferData(GL_ARRAY_BUFFER,
-        buffers->instancePositions.size() * sizeof(glm::vec3),
-        buffers->instancePositions.data(), GL_DYNAMIC_DRAW);
+                buffers->instancePositions.size() * sizeof(glm::vec3),
+                buffers->instancePositions.data(), GL_DYNAMIC_DRAW);
 }

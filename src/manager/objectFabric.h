@@ -21,18 +21,22 @@ class objectFabric
 {
     private:
         std::shared_ptr<ObjectBuffers> instanceBuffers;
-        float deltaTime = 0;
         std::vector<glm::vec3> instancePositions;
         glm::mat4 viewMatrix;
         glm::mat4 projecctionMatrix;
-        std::pmr::unordered_map<GameObject::simpleObjectType,  std::shared_ptr<ObjectBuffers>> objBuffers;
-        std::pmr::unordered_map<GameObject::simpleObjectType, std::vector<std::unique_ptr<GameObject>>> simpleObjects;
-        std::pmr::unordered_map<std::string, Model> models;
+        std::pmr::unordered_map<SimpleObject::simpleObjectType,  std::shared_ptr<ObjectBuffers>> objBuffers;
+
+        
+        std::pmr::unordered_map<SimpleObject::simpleObjectType, std::vector<std::shared_ptr<SimpleObject>>> simpleObjects;
+        std::pmr::unordered_map<std::string, std::shared_ptr<Model>> models;
+        std::vector<std::string> modelList;
         void createCube(glm::vec3 position, std::string& textureName);
         void updateCube();
     public:
-        void setDeltaTime(float deltaTime);
-        void createSimpleObject(GameObject::simpleObjectType type, glm::vec3 position, std::string textureName);
+        void deleteSimpleObject(SimpleObject::simpleObjectType objectType, unsigned int objectIndex);
+        void updateModels(const std::shared_ptr<Camera>& camera);
+        auto getModel(const std::string& modelName) -> std::weak_ptr<Model>;
+        void createSimpleObject(SimpleObject::simpleObjectType type, glm::vec3 position, std::string textureName);
         void updateSimpleObjects(const std::shared_ptr<Camera>& camera);
-        void createModel(std::string& pathToModel);
+        void createModel(glm::vec3 position, const char* modelFileName, std::string nameForSave);
 };

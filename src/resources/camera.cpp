@@ -44,7 +44,7 @@ void Camera::processKeyboard(cameraMovement direction, GLfloat deltaTime)
 		this->Position += this->Right * velocity;
 }
 
-void Camera::processMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch)
+void Camera::processMouseMovement(GLfloat xoffset, GLfloat yoffset, float deltaTime, GLboolean constrainPitch)
 {
 	if (firstMouse)
 	{
@@ -89,13 +89,13 @@ void Camera::processMouseScroll(GLfloat yoffset)
 
 void Camera::updateCameraVectors()
 {
-	//Рассчет нового вектора front
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ front
 	glm::vec3 front;
 	front.x = cos(glm::radians(this->Yaw)) * cos(glm::radians(this->Pitch));
 	front.y = sin(glm::radians(this->Pitch));
 	front.z = sin(glm::radians(this->Yaw)) * cos(glm::radians(this->Pitch));
 	this->Front = glm::normalize(front);
-	//Перерассчет правого и верхнего векторов
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	this->Right = glm::normalize(glm::cross(this->Front, this->WorldUp));
 	this->Up = glm::normalize(glm::cross(this->Right, this->Front));
 }

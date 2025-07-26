@@ -10,8 +10,8 @@
 #include <gtc/type_ptr.hpp>
 #include <gtc/matrix_transform.hpp>
 
-//Определяем несколько возможных опций для движения камеры. Абстракция для специфичных оконных методов ввода
-// Используем enum для перечисления
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ enum пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 enum cameraMovement {
 	FORWARD,
 	BACKWARD, 
@@ -19,7 +19,7 @@ enum cameraMovement {
 	RIGHT
 };
 
-//Значения камеры по уммолчанию
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 const GLfloat YAW = -90.f;
 const GLfloat PITCH = 0.f;
 const GLfloat SPEED = 3.f;
@@ -27,35 +27,35 @@ const GLfloat SENSITIVITY = 0.25f;
 const GLfloat ZOOM = 45.f;
 
 
-//Класс для инкапсуляции методов ввода, матриц и рассчетов
+//пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 class Camera {
 public:
-	glm::vec3 Position;//Координата позиции камеры
-	glm::vec3 Front;//Наблюдаемый объект
-	glm::vec3 Up;//Вектор по оси y
-	glm::vec3 Right;//Вектор по оси x
+	glm::vec3 Position;//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+	glm::vec3 Front;//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+	glm::vec3 Up;//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ y
+	glm::vec3 Right;//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ x
 	glm::vec3 WorldUp;//
 
 	float lastX;
 	float lastY;
-	//Углы Эйлера
+	//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 	GLfloat Yaw;
 	GLfloat Pitch;
-	//Опции камеры
+	//пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 	GLfloat movementSpeed;
 	GLfloat mouseSensitivity;
 	GLfloat zoom;
 	bool firstMouse = true;
-	//Конструктор векторов
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	Camera(const unsigned int& scrWidth, const unsigned int& scrHeight, glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = YAW, GLfloat pitch = PITCH);
-	//Конструктор скалярных значений
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch);
-	//Рассчет матрицы вида 
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ 
 	glm::mat4 getViewMatrix();
 	glm::mat4 getProjectionMatrix();
-	// функция для отслеживания нажатия клавиш
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 	void processKeyboard(cameraMovement direction, GLfloat deltaTime);
-	void processMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch = true);
+	void processMouseMovement(GLfloat xoffset, GLfloat yoffset, float deltaTime, GLboolean constrainPitch = true);
 	void processMouseScroll(GLfloat yoffset);
 	void setProjectionMatrix(glm::mat4 projectionMatrix) {
 		
